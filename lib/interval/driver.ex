@@ -55,8 +55,12 @@ defmodule Driver do
   # Helper to create an interval tree given a tuple list of intervals
   def create_tree(intervals)
       when is_list(intervals) and is_tuple(hd(intervals)) do
-    Enum.reduce(intervals, Tree.new(), fn {start, finish}, tree_acc ->
-      Tree.insert(tree_acc, Interval.new({start, finish}))
+    Enum.reduce(intervals, Tree.new(), fn
+      {start, finish, data}, tree_acc ->
+        Tree.insert(tree_acc, Interval.new({start, finish, data}))
+
+      {start, finish}, tree_acc ->
+        Tree.insert(tree_acc, Interval.new({start, finish}))
     end)
   end
 

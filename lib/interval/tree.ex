@@ -5,16 +5,16 @@ defmodule Interval.Tree do
   The underlying tree implements a self-balancing AVL tree ensuring
   all insert operations are O(log n) and that tree height is always O(log n)
 
-  The tree node contains the interval data which 
+  The tree node contains the interval data which
   contains the start and finish times
 
   We also keep track of the max time for that node's subtree.  This
   is helpful when we compute the overlap search
 
-  The left and right child nodes of the current node are stored in the 
+  The left and right child nodes of the current node are stored in the
   left and right fields respectively
 
-  Thanks to geeksforgeeks.org and the CLR algorithms textbook 
+  Thanks to geeksforgeeks.org and the CLR algorithms textbook
   for Interval and AVL Tree descriptions and implementations
 
   http://www.geeksforgeeks.org/interval-tree/
@@ -40,7 +40,7 @@ defmodule Interval.Tree do
   def traverse(%Tree{root: node}) do
     list = do_traverse(node, [])
 
-    # Since we prepended to the list for O(1), 
+    # Since we prepended to the list for O(1),
     # we now need to reverse to ensure correct order
     Enum.reverse(list)
   end
@@ -88,18 +88,21 @@ defmodule Interval.Tree do
     # check if given interval key overlaps with current interval node
     acc =
       case Interval.overlap?(t1, t2) do
-        true -> MapSet.put(acc, t1)
-        false -> acc
+        true ->
+          MapSet.put(acc, t1)
+
+        false ->
+          acc
       end
 
     # recurse left and right
 
-    # NOTE: the classic overlap condition is  
+    # NOTE: the classic overlap condition is
     # (t1.start < t2.finish and t1.finish > t2.start)
 
     # Given that the left child exists and its max is greater than
-    # the interval key's start, then the key may overlap with an interval 
-    # node in the left subtree, search left! 
+    # the interval key's start, then the key may overlap with an interval
+    # node in the left subtree, search left!
     # (notice this is half the classic overlap condition)
 
     acc =
@@ -113,7 +116,7 @@ defmodule Interval.Tree do
 
     # If we have an "overlap" with the current node's start and the right's
     # aggregate max finish, then search the right subtree
-    # (notice this pretty well resembles the classic overlap condition with the 
+    # (notice this pretty well resembles the classic overlap condition with the
     #  difference being the aggregate max term)
 
     acc =
@@ -178,7 +181,7 @@ defmodule Interval.Tree do
     # recurse with right subtree
     r = do_insert(r, interval)
 
-    # update the node with updated right child, 
+    # update the node with updated right child,
     # also update height and max interval
     n =
       %Node{n | right: r, height: max_height(l, r) + 1}
@@ -207,10 +210,10 @@ defmodule Interval.Tree do
         # and since low_key is less than y's start_key it was inserted on its left
         # Hence - left left
 
-        #         z                                      y 
+        #         z                                      y
         #        / \                                   /   \
         #       y   T4      Right Rotate (z)          x      z
-        #      / \          - - - - - - - - ->      /  \    /  \ 
+        #      / \          - - - - - - - - ->      /  \    /  \
         #     x   T3                               T1  T2  T3  T4
         #    / \
         #  T1   T2
@@ -225,7 +228,7 @@ defmodule Interval.Tree do
         # Hence - right right
 
         #    z                                y
-        #   /  \                            /   \ 
+        #   /  \                            /   \
         #  T1   y     Left Rotate(z)       z      x
         #      /  \   - - - - - - - ->    / \    / \
         #     T2   x                     T1  T2 T3  T4
@@ -243,7 +246,7 @@ defmodule Interval.Tree do
         # Hence - left right
 
         #      z                               z                           x
-        #     / \                            /   \                        /  \ 
+        #     / \                            /   \                        /  \
         #    y   T4  Left Rotate (y)        x    T4  Right Rotate(z)    y      z
         #   / \      - - - - - - - - ->    /  \      - - - - - - - ->  / \    / \
         # T1   x                          y    T3                    T1  T2 T3  T4
@@ -261,7 +264,7 @@ defmodule Interval.Tree do
         # Hence - right left
 
         #    z                            z                            x
-        #   / \                          / \                          /  \ 
+        #   / \                          / \                          /  \
         # T1   y   Right Rotate (y)    T1   x      Left Rotate(z)   z      y
         #     / \  - - - - - - - - ->     /  \   - - - - - - - ->  / \    / \
         #    x   T4                      T2   y                  T1  T2  T3  T4
@@ -283,10 +286,10 @@ defmodule Interval.Tree do
 
   T1, T2, T3 and T4 are subtrees.
 
-         z                                      y 
+         z                                      y
         / \                                   /   \
        y   T4      Right Rotate (z)          x      z
-      / \          - - - - - - - - ->      /  \    /  \ 
+      / \          - - - - - - - - ->      /  \    /  \
      x   T3                               T1  T2  T3  T4
     / \
   T1   T2
@@ -310,7 +313,7 @@ defmodule Interval.Tree do
 
 
     z                                y
-   /  \                            /   \ 
+   /  \                            /   \
   T1   y     Left Rotate(z)       z      x
       /  \   - - - - - - - ->    / \    / \
      T2   x                     T1  T2 T3  T4

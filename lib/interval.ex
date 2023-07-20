@@ -1,10 +1,15 @@
 defmodule Interval do
-  defstruct start: -1, finish: -1
+  defstruct start: -1, finish: -1, data: nil
 
   @doc "Create new interval given start time and finish"
   def new({start, finish})
       when is_integer(start) and is_integer(finish) and start <= finish do
     %Interval{start: start, finish: finish}
+  end
+
+  def new({start, finish, data})
+      when is_integer(start) and is_integer(finish) and start <= finish do
+    %Interval{start: start, finish: finish, data: data}
   end
 
   @doc """
